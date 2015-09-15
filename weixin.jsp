@@ -7,7 +7,7 @@ class wx{
         StringBuilder buffer = new StringBuilder();  
         BufferedReader reader=null;  
         try{  
-            reader = new BufferedReader(new InputStreamReader(in));  
+            reader = new BufferedReader(new InputStreamReader(in, "utf-8")); 
             String line=null;  
             while((line = reader.readLine())!=null){  
                 buffer.append(line);  
