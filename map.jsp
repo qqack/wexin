@@ -1,8 +1,11 @@
-<%@ page contentType="text/html;charset=utf-8"%>
-<%@ page import="java.sql.*"%>
-<%@ page import="java.util.*"%>
- <%
+<%@ page contentType="text/html;charset=utf-8"%><%@ page import="java.sql.*"%><%@ page import="java.util.*"%><%
+final HttpServletRequest final_request=request; 
+final HttpServletResponse final_response=response; 
     	class wx{
+    		HttpServletResponse final_response;
+    		public wx(HttpServletResponse response){
+    			final_response = response;
+    		}
     		public ArrayList<double[]> getLocation(){
     			Connection con;
 				Statement st;
@@ -11,7 +14,7 @@
 				try{
 					Class.forName("com.mysql.jdbc.Driver").newInstance();
 				} catch(Exception e) { 
-					//out.print(e);
+					this.print(e.toString());
 				}
 				try {
 				    String uri="jdbc:mysql://127.0.0.1:3306/test";
@@ -29,12 +32,22 @@
 				  	st.close();
 				    con.close();
 				} catch(SQLException e1) {
+					this.print(e1.toString());
 					//out.print(e1);
 				}
 				return mylist;
 			}
+		    public void print(String s) {
+				try{ 
+					final_response.getWriter().print(s);
+					//final_response.getWriter().flush();
+					//final_response.getWriter().close();
+				}
+				catch(Exception e){
+				}
+			}
     	}
-    	wx weixin = new wx();
+    	wx weixin = new wx(final_response);
     	ArrayList<double[]> locations = weixin.getLocation();
     %>
 <html>
@@ -50,10 +63,7 @@
 </head>
 <body>
 	<div id="allmap"></div>
-	<!-- <input type="button" onclick="deletePoint()" value="删除id=1"/-->
-    <!-- <input type="button" onclick="viewPoint()" value="显示位置"/>
-    <input type="button" onclick="getPhoto()" value="显示头像"/>
-    -->
+	
 </body>
 </html>
 <script type="text/javascript">
@@ -69,17 +79,7 @@
 		map.addOverlay(marker);
 		marker.setLabel(label);
 	}
-	// 随机向地图添加25个标注
-	// var bounds = map.getBounds();
-	// var sw = bounds.getSouthWest();
-	// var ne = bounds.getNorthEast();
-	// var lngSpan = Math.abs(sw.lng - ne.lng);
-	// var latSpan = Math.abs(ne.lat - sw.lat);
-	// for (var i = 0; i < 10; i++) {
-	// 	var point = new BMap.Point(sw.lng + lngSpan * (Math.random() * 0.7), ne.lat - latSpan * (Math.random() * 0.7));
-	// 	var label = new BMap.Label("我是id="+i,{offset:new BMap.Size(20,-10)});
-	// 	addMarker(point,label);
-	// }
+	
 	
 	function deletePoint(){
 		var allOverlay = map.getOverlays();
@@ -114,10 +114,6 @@
 			//out.println(mynum[0] + " " + mynum[1]);
 			out.print("var point= new BMap.Point("+mynum[1]+", "+mynum[0]+");var label= new BMap.Label("+(i++)+",{offset:new BMap.Size(20,-10)});addMarker(point,label);");
 		}
-		// for(int i = 1;i<=locations.length;i++){
-		// 	//out.println(mynum[0] + " " + mynum[1]);
-		// 	out.print("var point= new BMap.Point("+locations[i][1]+", "+locations[i][0]+");var label= new BMap.Label("+i+",{offset:new BMap.Size(20,-10)});addMarker(point,label);");
-		// 	i++;
-		// }
+		
 	%>
 </script>
