@@ -40,8 +40,6 @@ final HttpServletResponse final_response=response;
 		    public void print(String s) {
 				try{ 
 					final_response.getWriter().print(s);
-					//final_response.getWriter().flush();
-					//final_response.getWriter().close();
 				}
 				catch(Exception e){
 				}
@@ -53,67 +51,91 @@ final HttpServletResponse final_response=response;
 <html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<!--meta name="viewport" content="width=device-width,initial-scale=1" /-->
 	<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
 	<style type="text/css">
 		body, html {width: 100%;height: 100%;margin:0;font-family:"微软雅黑";}
-		#allmap{width:100%;height:500px;}
+		#allmap{width:100%;height:100%;}
 	</style>
 	<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=t2L0Sa4Wo7G39aoCZri5WTmR"></script>
+	<script src="//7u2n9p.com1.z0.glb.clouddn.com/jquery/2.1.3/jquery.min.js"></script>
 	<title>显示位置</title>
 </head>
 <body>
 	<div id="allmap"></div>
-	
+	<input id = "input" type="button" onclick="getPhoto();" value="添加头像" />
+	<div id="message">
+	</div>
 </body>
 </html>
 <script type="text/javascript">
+	
 	// 百度地图API功能
 	var map = new BMap.Map("allmap");
 	var point = new BMap.Point(112.921631, 27.902252);
 	map.centerAndZoom(point, 15);
-	map.disableDoubleClickZoom(true);
+	
+	//添加变大变小控件
+	var opts = {type: BMAP_NAVIGATION_CONTROL_ZOOM}    
+	map.addControl(new BMap.NavigationControl(opts));
 		
 	// 编写自定义函数,创建标注
-	function addMarker(point,label){
+	function addMarker(point){
 		var marker = new BMap.Marker(point);
 		map.addOverlay(marker);
-		marker.setLabel(label);
 	}
 	
-	
-	function deletePoint(){
-		var allOverlay = map.getOverlays();
-		for (var i = 0; i < allOverlay.length -1; i++){
-			if(allOverlay[i].getLabel().content == "我是id=1"){
-				map.removeOverlay(allOverlay[i]);
-				return false;
-			}
-		}
+	var data_info = [
+					 [112.921631, 27.902252,"地址：计算机学院"],
+					];
+	var opts2 = {
+				width : 250,     // 信息窗口宽度
+				height: 80,     // 信息窗口高度
+				title : "信息窗口" , // 信息窗口标题
+				enableMessage:true//设置允许信息窗发送短息
+			   };
+	for(var i=0;i<data_info.length;i++){
+		var marker = new BMap.Marker(new BMap.Point(data_info[i][0],data_info[i][1]));  // 创建标注
+		var content = data_info[i][2];
+		map.addOverlay(marker);               // 将标注添加到地图中
+		addClickHandler(content,marker);
 	}
-	function viewPoint(){
-		var point= new BMap.Point(112.921631, 27.902252);
-		var label= new BMap.Label("我在这里",{offset:new BMap.Size(20,-10)});
-		addMarker(point,label);
+	function addClickHandler(content,marker){
+		marker.addEventListener("click",function(e){
+			openInfo(content,e)}
+		);
 	}
+	function openInfo(content,e){
+		var p = e.target;
+		var point = new BMap.Point(p.getPosition().lng, p.getPosition().lat);
+		var infoWindow = new BMap.InfoWindow(content,opts2);  // 创建信息窗口对象 
+		map.openInfoWindow(infoWindow,point); //开启信息窗口
+	}
+	//添加头像
 	function getPhoto(){
-		// 百度地图API功能
-		var map = new BMap.Map("allmap");
-		//var point = new BMap.Point(116.404, 39.915);
-		var point = new BMap.Point(112.921631, 27.902252);
-		map.centerAndZoom(point, 15);
 		
-		//创建小狐狸
-		var pt = new BMap.Point(112.921631, 27.902252);
-		var myIcon = new BMap.Icon("http://developer.baidu.com/map/jsdemo/img/fox.gif", new BMap.Size(300,157));
+		
+		var marker = new BMap.Point(112.921631, 27.902252);
+		var pt = new BMap.Point(112.921631, 27.902252+0.0025);
+		
+		addMarker(marker); 
+		var myIcon = new BMap.Icon("./404.jpg", new BMap.Size(50,50));
 		var marker2 = new BMap.Marker(pt,{icon:myIcon});  // 创建标注
-		map.addOverlay(marker2);              // 将标注添加到地图中
+		marker2.addEventListener("click",openInfo);
+		map.addOverlay(marker2);
+		  
 	}
-	<%
-		int i=1;
-		for(double[] mynum : locations){
-			//out.println(mynum[0] + " " + mynum[1]);
-			out.print("var point= new BMap.Point("+mynum[1]+", "+mynum[0]+");var label= new BMap.Label("+(i++)+",{offset:new BMap.Size(20,-10)});addMarker(point,label);");
-		}
 		
-	%>
+	
+	// <%
+	// 	int i=1;
+	// 	for(double[] mynum : locations){
+	// 		//out.println(mynum[0] + " " + mynum[1]);
+	// 		out.print("var point= new BMap.Point("+mynum[1]+", "+mynum[0]+");var label= new BMap.Label("+(i++)+",{offset:new BMap.Size(20,-10)});addMarker(point,label);");
+	// 	}
+		
+	// %>
+       
+
+	
 </script>
