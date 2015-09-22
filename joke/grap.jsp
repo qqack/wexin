@@ -110,14 +110,19 @@ class HttpRequest {
         return result;
     }    
 }
-//HttpRequest spider = new HttpRequest();
-//String str = spider.sendGet("http://www.mahua.com/newjokes/text/index_2.htm");
-String testStr = "12315<Test>show me</text>";  
-Pattern p = Pattern.compile("/[1-9]+/");  
-Matcher m = p.matcher(testStr); 
-//out.print(m.toString());
-while(m.find()){  
-    out.print("hah");
-    out.print(m.group(1));  
-}
+HttpRequest spider = new HttpRequest();
+String str = spider.sendGet("http://www.mahua.com/newjokes/text/index_2.htm");
+
+//String s ="<a href=\"标注1\" target=_blank>标注2</a>";<dd class="content">
+        Pattern p = Pattern.compile("<dd\\sclass=\"content\">(.*?)</dd>");
+        Matcher m = p.matcher(str);
+        List<String> result=new ArrayList<String>();
+        while(m.find()){
+            result.add(m.group());
+            //out.println(m.group());
+        }
+        for(String i:result){
+            out.println(i);
+        }
+        
 %>

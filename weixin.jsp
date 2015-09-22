@@ -84,16 +84,21 @@ class wechat{
 		     fromUsername = root.elementText("FromUserName");  
 		     toUsername = root.elementText("ToUserName");
 		     msgtype = root.elementText("MsgType");
-		     if(msgtype.equals("text")){  
-		     	content = root.elementTextTrim("Content");
-		     }else if(msgtype.equals("location")){
-		     	content = "获取地理位置成功";
-		     	location_x = Double.parseDouble(root.elementText("Location_X"));
-		     	location_y = Double.parseDouble(root.elementText("Location_Y"));
-		     	this.getLocation(location_x,location_y);
+		     if(root.elementTextTrim("Content").equals("笑话")){
+		     	content="haoben";
+		     	//导入笑话
 		     }else{
-		     	content = "已收到";
-		     }
+			     if(msgtype.equals("text")){  
+			     	content = root.elementTextTrim("Content");
+			     }else if(msgtype.equals("location")){
+			     	content = "获取地理位置成功";
+			     	location_x = Double.parseDouble(root.elementText("Location_X"));
+			     	location_y = Double.parseDouble(root.elementText("Location_Y"));
+			     	this.getLocation(location_x,location_y);
+			     }else{
+			     	content = "已收到";
+			     }
+		 	}
 		} 
 		String time = new Date().getTime()+""; 
 		String echostr = request.getParameter("echostr");
@@ -115,6 +120,5 @@ class wechat{
 }
 
 wechat weixin = new wechat();
-
 
 %>
